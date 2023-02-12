@@ -8,7 +8,7 @@ const (
 	SentAtColumn     string = "F"
 	ScannedAtColumn  string = "G"
 	SheetName        string = "Tamu"
-	BaseURL          string = "http://192.168.0.6:8080"
+	BaseURL          string = "qr-nikahan.zeet.app"
 	MessageBody      string = ""
 	AbleToScanAfer   string = "2023-06-17T09:00:00.00"
 )

@@ -7,4 +7,6 @@ RUN go build -o /qr-nikahan
 
 RUN rm -rf /.git
 
+EXPOSE 8080
+
 CMD ["goapp"]

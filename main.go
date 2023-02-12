@@ -38,7 +38,7 @@ func main() {
 
 	logMiddleware.Handler = router
 
-	server.Addr = "192.168.0.6:8080"
+	server.Addr = "localhost:8080"
 	server.Handler = &logMiddleware
 
 	helper.INFO("Running...")
