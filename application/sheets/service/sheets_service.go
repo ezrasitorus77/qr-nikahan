@@ -2,14 +2,13 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"qr-nikahan/config"
 	"qr-nikahan/domain"
 	"qr-nikahan/internal/consts"
 	log "qr-nikahan/internal/helper"
-	"strconv"
 	"time"
 
 	"golang.org/x/net/context"
@@ -27,7 +26,7 @@ func NewSpreadsheetService() (obj domain.SpreadsheetService) {
 		err error
 	)
 
-	srv, err = sheets.NewService(context.Background(), option.WithCredentialsFile(consts.ClientSecretPath), option.WithScopes(sheets.SpreadsheetsScope))
+	srv, err = sheets.NewService(context.Background(), option.WithCredentialsFile("./service_account.json"), option.WithScopes(sheets.SpreadsheetsScope))
 	if err != nil {
 		log.PANIC(err.Error())
 
@@ -44,7 +43,7 @@ func NewSpreadsheetService() (obj domain.SpreadsheetService) {
 func (obj *service) SentInvitation(row int, key string) (err error) {
 	var time string = time.Now().Format("2006-01-02 15:04:05")
 
-	if _, err = obj.sheetsService.Spreadsheets.Values.Update(consts.SheetsID, fmt.Sprintf("%s!%s%d", consts.SheetName, consts.SentAtColumn, row), &sheets.ValueRange{
+	if _, err = obj.sheetsService.Spreadsheets.Values.Update(config.SheetsID, fmt.Sprintf("%s!%s%d", consts.SheetName, consts.SentAtColumn, row), &sheets.ValueRange{
 		Values: [][]interface{}{{
 			time,
 		}},
@@ -54,7 +53,7 @@ func (obj *service) SentInvitation(row int, key string) (err error) {
 		return
 	}
 
-	if _, err = obj.sheetsService.Spreadsheets.Values.Update(consts.SheetsID, fmt.Sprintf("%s!%s%d", consts.SheetName, consts.KeyColumn, row), &sheets.ValueRange{
+	if _, err = obj.sheetsService.Spreadsheets.Values.Update(config.SheetsID, fmt.Sprintf("%s!%s%d", consts.SheetName, consts.KeyColumn, row), &sheets.ValueRange{
 		Values: [][]interface{}{{
 			key,
 		}},
@@ -70,7 +69,7 @@ func (obj *service) SentInvitation(row int, key string) (err error) {
 func (obj *service) ScannedQR(row int) (err error) {
 	var time string = time.Now().Format("2006-01-02 15:04:05")
 
-	if _, err = obj.sheetsService.Spreadsheets.Values.Update(consts.SheetsID, fmt.Sprintf("%s!%s%d", consts.SheetName, consts.ScannedAtColumn, row), &sheets.ValueRange{
+	if _, err = obj.sheetsService.Spreadsheets.Values.Update(config.SheetsID, fmt.Sprintf("%s!%s%d", consts.SheetName, consts.ScannedAtColumn, row), &sheets.ValueRange{
 		Values: [][]interface{}{{
 			time,
 		}},
@@ -83,28 +82,13 @@ func (obj *service) ScannedQR(row int) (err error) {
 	return
 }
 
-func (obj *service) GetRowByNameAndPhone(name string, phone int, data []domain.GETSheet) (err error, row int) {
-	for idx, v := range data {
-		if v.Name == name && v.Phone == phone {
-			row = idx + 2
-
-			return
-		}
-	}
-
-	err = errors.New("No data found with Nama: " + name + " and Phone: " + strconv.Itoa(phone))
-	log.ERROR(err.Error())
-
-	return
-}
-
 func (obj *service) GetAllData() (err error, data []domain.GETSheet) {
 	var (
 		resp     *http.Response
 		dataByte []byte
 	)
 
-	resp, err = http.Get(consts.GetAPI)
+	resp, err = http.Get(config.GetAPI)
 	if err != nil {
 		log.PANIC(err.Error())
 

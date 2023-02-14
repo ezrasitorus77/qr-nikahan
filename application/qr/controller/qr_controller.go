@@ -3,9 +3,10 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"qr-nikahan/config"
 	"qr-nikahan/domain"
-	"qr-nikahan/internal/consts"
 	"qr-nikahan/internal/helper"
+	"strconv"
 	"strings"
 	"time"
 
@@ -37,7 +38,7 @@ func (obj *Controller) Check(w http.ResponseWriter, r *http.Request, params http
 		err            error
 	)
 
-	ableToScanAfer, err = time.Parse(timeLayout, consts.AbleToScanAfer)
+	ableToScanAfer, err = time.Parse(timeLayout, config.AbleToScanAfer)
 	if err != nil {
 		helper.ERROR("Failed parsing time")
 		obj.internalServerError(w)
@@ -75,12 +76,14 @@ func (obj *Controller) Check(w http.ResponseWriter, r *http.Request, params http
 
 	for _, data := range sheetData {
 		if key == data.Key {
+			var row int
+
 			if data.ScannedAt != "" {
 				var scannedAt time.Time
 
 				scannedAt, err = time.Parse(timeLayout, strings.Replace(data.ScannedAt, "Z", "", -1))
 				if err != nil {
-					helper.ERROR(fmt.Sprintf("Failed parsing time for %d/%s;err: %s", data.Phone, data.Name, err.Error()))
+					helper.ERROR(fmt.Sprintf("Failed parsing time for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
 					obj.internalServerError(w)
 
 					return
@@ -89,13 +92,13 @@ func (obj *Controller) Check(w http.ResponseWriter, r *http.Request, params http
 				if now.After(scannedAt) {
 					tmpl, err = template.ParseFiles("./assets/web/redundant.html")
 					if err != nil {
-						helper.ERROR(fmt.Sprintf("Failed parsing redundant.html for %d/%s;err: %s", data.Phone, data.Name, err.Error()))
+						helper.ERROR(fmt.Sprintf("Failed parsing redundant.html for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
 
 						return
 					}
 
 					if err = tmpl.Execute(w, data); err != nil {
-						helper.ERROR(fmt.Sprintf("Failed rendering redundant.html time for %d/%s;err: %s", data.Phone, data.Name, err.Error()))
+						helper.ERROR(fmt.Sprintf("Failed rendering redundant.html time for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
 						obj.internalServerError(w)
 
 						return
@@ -105,25 +108,33 @@ func (obj *Controller) Check(w http.ResponseWriter, r *http.Request, params http
 				}
 			}
 
-			helper.INFO(fmt.Sprintf("QRValid for %d/%s", data.Phone, data.Name))
+			helper.INFO(fmt.Sprintf("QRValid for %s/%s", data.Phone, data.Name))
 
 			tmpl, err = template.ParseFiles("./assets/web/qr_valid.html")
 			if err != nil {
-				helper.ERROR(fmt.Sprintf("Failed parsing qr_valid.html for %d/%s;err: %s", data.Phone, data.Name, err.Error()))
+				helper.ERROR(fmt.Sprintf("Failed parsing qr_valid.html for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
 				obj.internalServerError(w)
 
 				return
 			}
 
 			if err = tmpl.Execute(w, data); err != nil {
-				helper.ERROR(fmt.Sprintf("Failed rendering qr_valid.html for %d/%s;err: %s", data.Phone, data.Name, err.Error()))
+				helper.ERROR(fmt.Sprintf("Failed rendering qr_valid.html for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
 				obj.internalServerError(w)
 
 				return
 			}
 
-			if err = obj.sheetsService.ScannedQR(data.ID + 1); err != nil {
-				helper.ERROR(fmt.Sprintf("Failed updating sheet for %d/%s;err: %s", data.Phone, data.Name, err.Error()))
+			row, err = strconv.Atoi(data.ID)
+			if err != nil {
+				helper.ERROR(fmt.Sprintf("Failed converting id to int for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
+				obj.internalServerError(w)
+
+				return
+			}
+
+			if err = obj.sheetsService.ScannedQR(row + 1); err != nil {
+				helper.ERROR(fmt.Sprintf("Failed updating sheet for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
 				obj.internalServerError(w)
 
 				return

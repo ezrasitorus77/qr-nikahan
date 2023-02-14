@@ -7,6 +7,8 @@ import (
 	"qr-nikahan/internal/helper"
 	"qr-nikahan/internal/middleware"
 
+	_ "qr-nikahan/config"
+
 	qrService "qr-nikahan/application/qr/service"
 	sheetService "qr-nikahan/application/sheets/service"
 	waService "qr-nikahan/application/whatsapp/service"

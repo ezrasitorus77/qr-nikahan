@@ -6,6 +6,7 @@ import (
 	"qr-nikahan/domain"
 	"qr-nikahan/internal/helper"
 	"strconv"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -47,10 +48,12 @@ func (obj *Controller) Blast(w http.ResponseWriter, r *http.Request, params http
 		var (
 			qrImage []byte
 			key     string
-			errDesc string = fmt.Sprintf("Failed generating QR for %d/%s ", data.Phone, data.Name)
+			phone   string = strings.Replace(data.Phone, " ", "", -1)
+			errDesc string = fmt.Sprintf("Failed generating QR for %s/%s ", data.Phone, data.Name)
+			row     int
 		)
 
-		if strconv.Itoa(data.Phone) != "" && strconv.Itoa(data.ID) != "" && data.Name != "" {
+		if phone != "" && data.ID != "" && data.Name != "" {
 			err, qrImage, key = obj.qrService.Generate(data)
 			if err != nil {
 				helper.ERROR(err.Error())
@@ -63,7 +66,7 @@ func (obj *Controller) Blast(w http.ResponseWriter, r *http.Request, params http
 				return
 			}
 
-			if err = obj.waService.SendMessage(data.Name, data.Phone, qrImage); err != nil {
+			if err = obj.waService.SendMessage(data.Name, phone, qrImage); err != nil {
 				helper.ERROR(err.Error())
 
 				resp.Error.Err = err
@@ -74,7 +77,17 @@ func (obj *Controller) Blast(w http.ResponseWriter, r *http.Request, params http
 				return
 			}
 
-			if err = obj.sheetsService.SentInvitation(data.ID+1, key); err != nil {
+			row, err = strconv.Atoi(data.ID)
+			if err != nil {
+				helper.ERROR(err.Error())
+
+				resp.Error.Err = err
+				resp.Error.Desc = errDesc
+
+				helper.Response(w, resp, http.StatusInternalServerError)
+			}
+
+			if err = obj.sheetsService.SentInvitation(row+1, key); err != nil {
 				helper.ERROR(err.Error())
 
 				resp.Error.Err = err
