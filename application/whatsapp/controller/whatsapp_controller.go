@@ -53,7 +53,7 @@ func (obj *Controller) Blast(w http.ResponseWriter, r *http.Request, params http
 			row     int
 		)
 
-		if phone != "" && data.ID != "" && data.Name != "" {
+		if phone != "" && data.ID != "" && data.Name != "" && data.SentAt == "" && data.ScannedAt == "" {
 			err, qrImage, key = obj.qrService.Generate(data)
 			if err != nil {
 				helper.ERROR(err.Error())

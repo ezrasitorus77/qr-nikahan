@@ -9,7 +9,6 @@ import (
 
 	"qr-nikahan/internal/helper"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/mdp/qrterminal"
 	"go.mau.fi/whatsmeow"
 	waProto "go.mau.fi/whatsmeow/binary/proto"
