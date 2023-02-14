@@ -8,7 +8,11 @@ import (
 )
 
 var (
-	DBAdress             string
+	DBHost               string
+	DBPort               string
+	DBUsername           string
+	DBPassword           string
+	DBName               string
 	DBDialect            string
 	GetAPI               string
 	SheetsID             string
@@ -37,9 +41,29 @@ func init() {
 	// 	helper.PANIC(err)
 	// }
 
-	DBAdress = os.Getenv("DB_ADDRESS")
-	if DBAdress == "" {
-		helper.PANIC("DB_ADRESS not found")
+	DBHost = os.Getenv("DB_HOSTNAME")
+	if DBHost == "" {
+		helper.PANIC("DB_HOSTNAME not found")
+	}
+
+	DBPort = os.Getenv("DATABASE_PORT")
+	if DBPort == "" {
+		helper.PANIC("DATABASE_PORT not found")
+	}
+
+	DBUsername = os.Getenv("DATABASE_USERNAME")
+	if DBUsername == "" {
+		helper.PANIC("DATABASE_USERNAME not found")
+	}
+
+	DBPassword = os.Getenv("DATABASE_PASSWORD")
+	if DBPassword == "" {
+		helper.PANIC("DATABASE_PASSWORD not found")
+	}
+
+	DBName = os.Getenv("DATABASE_DATABASE")
+	if DBName == "" {
+		helper.PANIC("DATABASE_DATABASE not found")
 	}
 
 	DBDialect = os.Getenv("DB_DIALECT")
