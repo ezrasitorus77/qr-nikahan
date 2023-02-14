@@ -37,9 +37,9 @@ func init() {
 	// 	helper.PANIC(err)
 	// }
 
-	DBAdress = os.Getenv("DATABASE_ADDRESS")
+	DBAdress = os.Getenv("DATABASE_URL")
 	if DBAdress == "" {
-		helper.PANIC("DATABASE_ADDRESS not found")
+		helper.PANIC("DATABASE_URL not found")
 	}
 
 	DBDialect = os.Getenv("DB_DIALECT")
