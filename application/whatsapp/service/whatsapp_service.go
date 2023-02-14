@@ -30,10 +30,11 @@ func NewWhatsAppService() (obj domain.WhatsAppService) {
 		deviceStore *store.Device
 		client      *whatsmeow.Client
 		qrChan      <-chan whatsmeow.QRChannelItem
+		dbAdress    string = fmt.Sprintf("%s:%s@%s:%s/%s", config.DBUsername, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 		err         error
 	)
 
-	container, err = sqlstore.New(config.DBDialect, config.DBAdress, waLog.Noop)
+	container, err = sqlstore.New(config.DBDialect, dbAdress, waLog.Noop)
 	if err != nil {
 		helper.PANIC(err.Error())
 
