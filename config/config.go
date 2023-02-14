@@ -57,9 +57,9 @@ func init() {
 		helper.PANIC("DATABASE_PASSWORD not found")
 	}
 
-	DBName = os.Getenv("DATABASE_DATABASE")
+	DBName = os.Getenv("DB_NAME")
 	if DBName == "" {
-		helper.PANIC("DATABASE_DATABASE not found")
+		helper.PANIC("DB_NAME not found")
 	}
 
 	DBDialect = os.Getenv("DB_DIALECT")
