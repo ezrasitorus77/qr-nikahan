@@ -28,7 +28,6 @@ func NewQRController(sheetsService domain.SpreadsheetService, qrService domain.Q
 
 func (obj *Controller) Check(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	var (
-		resp           domain.Response
 		key            string = params.ByName("key")
 		sheetData      []domain.GETSheet
 		tmpl           *template.Template
@@ -68,12 +67,8 @@ func (obj *Controller) Check(w http.ResponseWriter, r *http.Request, params http
 
 	err, sheetData = obj.sheetsService.GetAllData()
 	if err != nil {
-		helper.ERROR(err.Error())
-
-		resp.Error.Err = err
-		resp.Error.Desc = "Failed getting all sheet data"
-
-		helper.Response(w, resp, http.StatusInternalServerError)
+		helper.ERROR("Failed getting all sheet data")
+		obj.internalServerError(w)
 
 		return
 	}
