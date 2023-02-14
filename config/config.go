@@ -42,19 +42,19 @@ func init() {
 		helper.PANIC("DB_HOSTNAME not found")
 	}
 
-	DBPort = os.Getenv("DATABASE_PORT")
+	DBPort = os.Getenv("DB_PORT")
 	if DBPort == "" {
-		helper.PANIC("DATABASE_PORT not found")
+		helper.PANIC("DB_PORT not found")
 	}
 
-	DBUsername = os.Getenv("DATABASE_USERNAME")
+	DBUsername = os.Getenv("DB_USERNAME")
 	if DBUsername == "" {
-		helper.PANIC("DATABASE_USERNAME not found")
+		helper.PANIC("DB_USERNAME not found")
 	}
 
-	DBPassword = os.Getenv("DATABASE_PASSWORD")
+	DBPassword = os.Getenv("DB_PASSWORD")
 	if DBPassword == "" {
-		helper.PANIC("DATABASE_PASSWORD not found")
+		helper.PANIC("DB_PASSWORD not found")
 	}
 
 	DBName = os.Getenv("DB_NAME")
