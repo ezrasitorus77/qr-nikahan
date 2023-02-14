@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"qr-nikahan/internal/helper"
-
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -35,9 +33,9 @@ type ServiceAccountJSON struct {
 }
 
 func init() {
-	if err = godotenv.Load(); err != nil {
-		helper.PANIC(err)
-	}
+	// if err = godotenv.Load(); err != nil {
+	// 	helper.PANIC(err)
+	// }
 
 	DBAdress = os.Getenv("DB_ADDRESS")
 	if DBAdress == "" {
