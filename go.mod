@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.16
-	github.com/mdp/qrterminal v1.0.1
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	go.mau.fi/whatsmeow v0.0.0-20230204181151-b1f00ea99464
 	golang.org/x/net v0.5.0
@@ -32,5 +31,4 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20221227171554-f9683d7f8bef // indirect
 	google.golang.org/grpc v1.51.0 // indirect
-	rsc.io/qr v0.2.0 // indirect
 )

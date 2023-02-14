@@ -2,15 +2,12 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"os"
 	"qr-nikahan/domain"
 	"strconv"
 
 	"qr-nikahan/internal/helper"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/mdp/qrterminal"
 	"go.mau.fi/whatsmeow"
 	waProto "go.mau.fi/whatsmeow/binary/proto"
 	"go.mau.fi/whatsmeow/store"
@@ -29,8 +26,8 @@ func NewWhatsAppService() (obj domain.WhatsAppService) {
 		container   *sqlstore.Container
 		deviceStore *store.Device
 		client      *whatsmeow.Client
-		qrChan      <-chan whatsmeow.QRChannelItem
-		err         error
+		// qrChan      <-chan whatsmeow.QRChannelItem
+		err error
 	)
 
 	container, err = sqlstore.New("sqlite3", "file:wapp.db?_foreign_keys=on", waLog.Noop)
@@ -48,29 +45,36 @@ func NewWhatsAppService() (obj domain.WhatsAppService) {
 	}
 
 	client = whatsmeow.NewClient(deviceStore, waLog.Noop)
-	if client.Store.ID == nil {
-		qrChan, _ = client.GetQRChannel(context.Background())
-		err = client.Connect()
-		if err != nil {
-			helper.PANIC(err.Error())
+	// if client.Store.ID == nil {
+	// 	qrChan, _ = client.GetQRChannel(context.Background())
+	// 	err = client.Connect()
+	// 	if err != nil {
+	// 		helper.PANIC(err.Error())
 
-			return
-		}
+	// 		return
+	// 	}
 
-		for evt := range qrChan {
-			if evt.Event == "code" {
-				qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, os.Stdout)
-			} else {
-				helper.INFO(fmt.Sprintf("Login event: %s", evt.Event))
-			}
-		}
-	} else {
-		err = client.Connect()
-		if err != nil {
-			helper.PANIC(err.Error())
+	// 	for evt := range qrChan {
+	// 		if evt.Event == "code" {
+	// 			qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, os.Stdout)
+	// 		} else {
+	// 			helper.INFO(fmt.Sprintf("Login event: %s", evt.Event))
+	// 		}
+	// 	}
+	// } else {
+	// 	err = client.Connect()
+	// 	if err != nil {
+	// 		helper.PANIC(err.Error())
 
-			return
-		}
+	// 		return
+	// 	}
+	// }
+
+	err = client.Connect()
+	if err != nil {
+		helper.PANIC(err.Error())
+
+		return
 	}
 
 	obj = &service{
