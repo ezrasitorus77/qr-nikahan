@@ -30,7 +30,7 @@ func NewWhatsAppService() (obj domain.WhatsAppService) {
 		deviceStore *store.Device
 		client      *whatsmeow.Client
 		qrChan      <-chan whatsmeow.QRChannelItem
-		dbAdress    string = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUsername, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
+		dbAdress    string = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", config.DBHost, config.DBPort, config.DBUsername, config.DBPassword, config.DBName)
 		err         error
 	)
 
