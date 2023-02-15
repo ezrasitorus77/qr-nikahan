@@ -97,6 +97,9 @@ func (obj *Controller) Check(w http.ResponseWriter, r *http.Request, params http
 						return
 					}
 
+					scannedAt = scannedAt.Add(time.Duration(7) * time.Hour)
+					data.ScannedAt = scannedAt.String()
+
 					if err = tmpl.Execute(w, data); err != nil {
 						helper.ERROR(fmt.Sprintf("Failed rendering redundant.html time for %s/%s;err: %s", data.Phone, data.Name, err.Error()))
 						obj.internalServerError(w)
