@@ -3,11 +3,10 @@ package main
 import (
 	"net/http"
 
+	"qr-nikahan/config"
 	"qr-nikahan/domain"
 	"qr-nikahan/internal/helper"
 	"qr-nikahan/internal/middleware"
-
-	_ "qr-nikahan/config"
 
 	qrService "qr-nikahan/application/qr/service"
 	sheetService "qr-nikahan/application/sheets/service"
@@ -40,7 +39,7 @@ func main() {
 
 	logMiddleware.Handler = router
 
-	server.Addr = "localhost:8080"
+	server.Addr = config.IPAddress + ":" + config.IPPort
 	server.Handler = &logMiddleware
 
 	helper.INFO("Running...")

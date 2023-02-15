@@ -19,6 +19,8 @@ var (
 	AbleToScanAfer       string
 	BaseURL              string
 	ServiceAccount       string
+	IPAddress            string
+	IPPort               string
 	ServiceAccountConfig ServiceAccountJSON
 	err                  error
 )
@@ -85,6 +87,16 @@ func init() {
 	BaseURL = os.Getenv("BASE_URL")
 	if BaseURL == "" {
 		helper.PANIC("BASE_URL not found")
+	}
+
+	IPAddress = os.Getenv("IP_ADDRESS")
+	if IPAddress == "" {
+		helper.PANIC("IP_ADDRESS not found")
+	}
+
+	IPPort = os.Getenv("IP_PORT")
+	if IPPort == "" {
+		helper.PANIC("IP_PORT not found")
 	}
 
 	ServiceAccount = os.Getenv("SERVICE_ACCOUNT_CONFIG")
