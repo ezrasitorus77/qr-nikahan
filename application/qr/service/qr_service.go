@@ -10,6 +10,7 @@ import (
 	"qr-nikahan/config"
 	"qr-nikahan/domain"
 	log "qr-nikahan/internal/helper"
+	"strconv"
 
 	"github.com/skip2/go-qrcode"
 )
@@ -30,6 +31,8 @@ func (obj *service) Generate(data domain.GETSheet) (err error, qrImage []byte, k
 		in         *os.File
 		uniqueIden string = fmt.Sprintf("%#v", data)
 		path       string = fmt.Sprintf("./assets/qrimage/%s%s.jpeg", data.ID, data.Name)
+		opts       jpeg.Options
+		qrQuality  int
 	)
 
 	key = base64.StdEncoding.EncodeToString([]byte(uniqueIden))
@@ -51,8 +54,12 @@ func (obj *service) Generate(data domain.GETSheet) (err error, qrImage []byte, k
 	out, _ = os.Create(path)
 	defer out.Close()
 
-	var opts jpeg.Options
-	opts.Quality = 1
+	qrQuality, err = strconv.Atoi(config.QRQuality)
+	if err != nil {
+		log.ERROR(fmt.Sprintf("Error generate QR for %s;id %s;err=%s", data.Name, data.ID, err.Error()))
+	}
+
+	opts.Quality = qrQuality
 
 	err = jpeg.Encode(out, img, &opts)
 	if err != nil {
