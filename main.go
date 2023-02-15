@@ -39,7 +39,7 @@ func main() {
 
 	logMiddleware.Handler = router
 
-	server.Addr = config.IPAddress + ":" + config.IPPort
+	server.Addr = ":" + config.IPPort
 	server.Handler = &logMiddleware
 
 	helper.INFO("Running...")
