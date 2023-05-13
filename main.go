@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"qr-nikahan/config"
@@ -33,6 +34,21 @@ func main() {
 
 		err error
 	)
+
+	router.GET("/", func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+		var (
+			about       = make(map[string]string)
+			jsonEncoder *json.Encoder
+		)
+
+		about["Application Name"] = "QR Nikahan"
+		about["Version"] = "1.0"
+
+		w.WriteHeader(http.StatusOK)
+
+		jsonEncoder = json.NewEncoder(w)
+		jsonEncoder.Encode(about)
+	})
 
 	router.POST("/blast", waCont.Blast)
 	router.GET("/check/:key", qrCont.Check)
