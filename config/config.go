@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 	"qr-nikahan/internal/helper"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -15,7 +17,9 @@ var (
 	DBName               string
 	DBDialect            string
 	GetAPI               string
+	GetAPIMarhusip       string
 	SheetsID             string
+	MarhusipSheetsID     string
 	AbleToScanAfer       string
 	BaseURL              string
 	ServiceAccount       string
@@ -39,6 +43,10 @@ type ServiceAccountJSON struct {
 }
 
 func init() {
+	if err = godotenv.Load(".env"); err != nil {
+		helper.PANIC("config!")
+	}
+
 	DBHost = os.Getenv("DB_HOSTNAME")
 	if DBHost == "" {
 		helper.PANIC("DB_HOSTNAME not found")
@@ -97,6 +105,16 @@ func init() {
 	QRQuality = os.Getenv("QR_QUALITY")
 	if QRQuality == "" {
 		helper.PANIC("QR_QUALITY not found")
+	}
+
+	MarhusipSheetsID = os.Getenv("MARHUSIP_SHEETS_ID")
+	if MarhusipSheetsID == "" {
+		helper.PANIC("MARHUSIP_SHEETS_ID not found")
+	}
+
+	GetAPIMarhusip = os.Getenv("GET_API_MARHUSIP")
+	if GetAPIMarhusip == "" {
+		helper.PANIC("GET_API_MARHUSIP not found")
 	}
 
 	ServiceAccount = os.Getenv("SERVICE_ACCOUNT_CONFIG")

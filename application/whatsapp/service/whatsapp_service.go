@@ -9,6 +9,7 @@ import (
 
 	"qr-nikahan/internal/helper"
 
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	"github.com/mdp/qrterminal"
 	"go.mau.fi/whatsmeow"
@@ -109,6 +110,30 @@ func (obj *service) SendMessage(name, phone string, qrImage []byte) (err error) 
 		Server: types.DefaultUserServer,
 	}, &waProto.Message{
 		ImageMessage: &imageMsg,
+	})
+
+	if err != nil {
+		helper.ERROR("Failed send message to " + phone + "/" + name)
+
+		return
+	}
+
+	helper.INFO("Succeed sending to " + phone + "/" + name)
+	helper.INFO(sendResp)
+
+	return
+}
+
+func (obj *service) SendMarhusipMessage(name, phone string) (err error) {
+	var (
+		sendResp whatsmeow.SendResponse
+	)
+
+	sendResp, err = obj.client.SendMessage(context.Background(), types.JID{
+		User:   phone,
+		Server: types.DefaultUserServer,
+	}, &waProto.Message{
+		Conversation: proto.String("hai " + name),
 	})
 
 	if err != nil {

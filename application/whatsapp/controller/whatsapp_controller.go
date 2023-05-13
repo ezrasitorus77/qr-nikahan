@@ -107,3 +107,69 @@ func (obj *Controller) Blast(w http.ResponseWriter, r *http.Request, params http
 
 	return
 }
+
+func (obj *Controller) BlastMarhusip(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	var (
+		resp      domain.Response
+		sheetData []domain.GETSheetMarhusip
+		err       error
+	)
+
+	err, sheetData = obj.sheetsService.GetAllMarhusipData()
+	if err != nil {
+		helper.ERROR(err.Error())
+
+		resp.Error.Err = err
+		resp.Error.Desc = "Failed getting all sheet data"
+
+		helper.Response(w, resp, http.StatusInternalServerError)
+
+		return
+	}
+
+	for _, data := range sheetData {
+		var (
+			key   string
+			phone string = strings.Replace(data.Phone, " ", "", -1)
+			row   int
+		)
+
+		if phone != "" && data.ID != "" && data.Name != "" {
+			if err = obj.waService.SendMarhusipMessage(data.Name, phone); err != nil {
+				helper.ERROR(err.Error())
+
+				resp.Error.Err = err
+
+				helper.Response(w, resp, http.StatusInternalServerError)
+
+				return
+			}
+
+			row, err = strconv.Atoi(data.ID)
+			if err != nil {
+				helper.ERROR(err.Error())
+
+				resp.Error.Err = err
+
+				helper.Response(w, resp, http.StatusInternalServerError)
+			}
+
+			if err = obj.sheetsService.SentMarhusipInvitation(row+1, key); err != nil {
+				helper.ERROR(err.Error())
+
+				resp.Error.Err = err
+
+				helper.Response(w, resp, http.StatusInternalServerError)
+
+				return
+			}
+		}
+	}
+
+	helper.INFO("Succeed in blasting WA and updating sheets")
+	resp.Data = "OK"
+
+	helper.Response(w, resp, http.StatusOK)
+
+	return
+}

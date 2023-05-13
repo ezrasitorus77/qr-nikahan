@@ -37,6 +37,8 @@ func main() {
 	router.POST("/blast", waCont.Blast)
 	router.GET("/check/:key", qrCont.Check)
 
+	router.POST("/blast-marhusip", waCont.BlastMarhusip)
+
 	logMiddleware.Handler = router
 
 	server.Addr = ":" + config.IPPort

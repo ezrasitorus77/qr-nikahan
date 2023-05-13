@@ -112,3 +112,50 @@ func (obj *service) GetAllData() (err error, data []domain.GETSheet) {
 
 	return
 }
+
+func (obj *service) GetAllMarhusipData() (err error, data []domain.GETSheetMarhusip) {
+	var (
+		resp     *http.Response
+		dataByte []byte
+	)
+
+	resp, err = http.Get(config.GetAPIMarhusip)
+	if err != nil {
+		log.PANIC(err.Error())
+
+		return
+	}
+
+	defer resp.Body.Close()
+
+	dataByte, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.PANIC(err.Error())
+
+		return
+	}
+
+	if err = json.Unmarshal([]byte(dataByte), &data); err != nil {
+		log.PANIC(err.Error())
+
+		return
+	}
+
+	return
+}
+
+func (obj *service) SentMarhusipInvitation(row int, key string) (err error) {
+	var time string = time.Now().Format("2006-01-02 15:04:05")
+
+	if _, err = obj.sheetsService.Spreadsheets.Values.Update(config.MarhusipSheetsID, fmt.Sprintf("%s!%s%d", consts.SheetName, "D", row), &sheets.ValueRange{
+		Values: [][]interface{}{{
+			time,
+		}},
+	}).ValueInputOption("USER_ENTERED").Do(); err != nil {
+		log.ERROR(err.Error())
+
+		return
+	}
+
+	return
+}
