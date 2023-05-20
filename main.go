@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"qr-nikahan/config"
@@ -59,6 +60,7 @@ func main() {
 	server.Handler = &logMiddleware
 
 	helper.INFO("Running...")
+	fmt.Println("Running on port ", config.IPPort)
 	err = server.ListenAndServe()
 	if err != nil {
 		helper.PANIC(err.Error())
